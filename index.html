@@ -38,15 +38,50 @@
             z-index: 1000;
         }
         .task-drag-over-top {
-            border-top: 2px solid #3b82f6;
+            border-top: 3px solid #3b82f6;
             background-color: #f8faff;
         }
         .task-drag-over-bottom {
-            border-bottom: 2px solid #3b82f6;
+            border-bottom: 3px solid #3b82f6;
             background-color: #f8faff;
         }
         .tasks-container-dragging {
             background-color: #f9fafb;
+        }
+        .insertion-indicator {
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            border-radius: 2px;
+            margin: 4px 0;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            position: relative;
+            pointer-events: none;
+        }
+        .insertion-indicator.active {
+            opacity: 1;
+        }
+        .insertion-indicator::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: -3px;
+            width: 9px;
+            height: 9px;
+            background: #3b82f6;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        .insertion-indicator::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: -3px;
+            width: 9px;
+            height: 9px;
+            background: #3b82f6;
+            border-radius: 50%;
+            border: 2px solid white;
         }
     </style>
 </head>
@@ -124,6 +159,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=5"></script>
+    <script src="script.js?v=6"></script>
 </body>
 </html> 

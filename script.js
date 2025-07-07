@@ -172,6 +172,12 @@ class SoloTask {
         tasksContainer.addEventListener('dragover', (e) => this.handleContainerDragOver(e));
         tasksContainer.addEventListener('drop', (e) => this.handleContainerDrop(e));
 
+        // Add insertion indicator at the beginning
+        const firstIndicator = document.createElement('div');
+        firstIndicator.className = 'insertion-indicator';
+        firstIndicator.setAttribute('data-insertion-index', '0');
+        tasksContainer.appendChild(firstIndicator);
+
         sortedTasks.forEach((task, index) => {
             const taskElement = document.createElement('div');
             taskElement.className = `flex items-center p-4 hover:bg-gray-50 transition-colors priority-${task.priority}`;
@@ -220,6 +226,12 @@ class SoloTask {
             taskElement.addEventListener('dragend', (e) => this.handleDragEnd(e));
 
             tasksContainer.appendChild(taskElement);
+
+            // Add insertion indicator after each task
+            const indicator = document.createElement('div');
+            indicator.className = 'insertion-indicator';
+            indicator.setAttribute('data-insertion-index', String(index + 1));
+            tasksContainer.appendChild(indicator);
         });
     }
 
@@ -268,11 +280,17 @@ class SoloTask {
         if (taskElement && taskElement !== this.draggedTask.element) {
             const rect = taskElement.getBoundingClientRect();
             const midY = rect.top + rect.height / 2;
+            const taskIndex = parseInt(taskElement.getAttribute('data-task-index'));
             
+            // Find and activate the appropriate insertion indicator
             if (e.clientY < midY) {
-                taskElement.classList.add('task-drag-over-top');
+                // Show indicator above this task
+                const indicator = document.querySelector(`[data-insertion-index="${taskIndex}"]`);
+                if (indicator) indicator.classList.add('active');
             } else {
-                taskElement.classList.add('task-drag-over-bottom');
+                // Show indicator below this task
+                const indicator = document.querySelector(`[data-insertion-index="${taskIndex + 1}"]`);
+                if (indicator) indicator.classList.add('active');
             }
         }
     }
@@ -291,8 +309,17 @@ class SoloTask {
 
     handleDrop(e) {
         e.preventDefault();
-        const dropTarget = e.target.closest('[data-task-id]');
         
+        // Check if we're dropping on an insertion indicator
+        const insertionIndicator = e.target.closest('.insertion-indicator');
+        if (insertionIndicator && this.draggedTask) {
+            const insertionIndex = parseInt(insertionIndicator.getAttribute('data-insertion-index'));
+            this.reorderTask(this.draggedTask.index, insertionIndex);
+            this.clearDragStates();
+            return;
+        }
+        
+        const dropTarget = e.target.closest('[data-task-id]');
         if (dropTarget && dropTarget !== this.draggedTask.element) {
             const dropIndex = parseInt(dropTarget.getAttribute('data-task-index'));
             const rect = dropTarget.getBoundingClientRect();
@@ -325,12 +352,35 @@ class SoloTask {
             return;
         }
         
-        // Clear all drag states if we're not over a task
-        this.clearDragStates();
+        // Check if we're over an insertion indicator
+        const insertionIndicator = e.target.closest('.insertion-indicator');
+        if (insertionIndicator) {
+            this.clearDragStates();
+            insertionIndicator.classList.add('active');
+            return;
+        }
+        
+        // If we're in empty space, show the last insertion indicator
+        if (!taskElement) {
+            this.clearDragStates();
+            const indicators = document.querySelectorAll('.insertion-indicator');
+            if (indicators.length > 0) {
+                indicators[indicators.length - 1].classList.add('active');
+            }
+        }
     }
 
     handleContainerDrop(e) {
         e.preventDefault();
+        
+        // Check if we're dropping on an insertion indicator
+        const insertionIndicator = e.target.closest('.insertion-indicator');
+        if (insertionIndicator && this.draggedTask) {
+            const insertionIndex = parseInt(insertionIndicator.getAttribute('data-insertion-index'));
+            this.reorderTask(this.draggedTask.index, insertionIndex);
+            this.clearDragStates();
+            return;
+        }
         
         // If we're dropping on the container but not on a specific task,
         // drop at the end of the list
@@ -346,6 +396,9 @@ class SoloTask {
     clearDragStates() {
         document.querySelectorAll('.task-drag-over-top, .task-drag-over-bottom').forEach(el => {
             el.classList.remove('task-drag-over-top', 'task-drag-over-bottom');
+        });
+        document.querySelectorAll('.insertion-indicator.active').forEach(el => {
+            el.classList.remove('active');
         });
     }
 
