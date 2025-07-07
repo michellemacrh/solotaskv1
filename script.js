@@ -11,14 +11,10 @@ class SoloTask {
     }
 
     init() {
-        console.log('SoloTask init called');
         this.loadData();
-        console.log('Data loaded, tasks:', this.tasks);
         this.setupEventListeners();
-        console.log('Event listeners set up');
         this.renderTasks();
         this.updateTaskCount();
-        console.log('Initialization complete');
     }
 
     // Data Management
@@ -62,19 +58,11 @@ class SoloTask {
 
     // Task Management
     addTask() {
-        console.log('addTask called');
         const taskInput = document.getElementById('task-input');
         const dueDateInput = document.getElementById('due-date-input');
         const prioritySelect = document.getElementById('priority-select');
 
-        console.log('Elements found:', {
-            taskInput: !!taskInput,
-            dueDateInput: !!dueDateInput,
-            prioritySelect: !!prioritySelect
-        });
-
         const title = taskInput.value.trim();
-        console.log('Task title:', title);
         if (!title) return;
 
         const task = {
@@ -164,17 +152,10 @@ class SoloTask {
     // Rendering
 
     renderTasks() {
-        console.log('renderTasks called, tasks.length:', this.tasks.length);
         const tasksContainer = document.getElementById('tasks-container');
         const emptyState = document.getElementById('empty-state');
         
-        console.log('DOM elements found:', {
-            tasksContainer: !!tasksContainer,
-            emptyState: !!emptyState
-        });
-        
         if (this.tasks.length === 0) {
-            console.log('Showing empty state');
             tasksContainer.style.display = 'none';
             emptyState.style.display = 'block';
             return;
@@ -184,28 +165,12 @@ class SoloTask {
         emptyState.style.display = 'none';
         tasksContainer.innerHTML = '';
 
-        // Sort tasks: incomplete first, then by order (if exists), then by priority, then by due date
-        const sortedTasks = [...this.tasks].sort((a, b) => {
-            if (a.completed !== b.completed) {
-                return a.completed ? 1 : -1;
-            }
-            
-            // Use order if it exists, otherwise fall back to other sorting
-            if (a.order !== undefined && b.order !== undefined) {
-                return a.order - b.order;
-            }
-            
-            const priorityOrder = { high: 3, medium: 2, low: 1 };
-            if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
-                return priorityOrder[b.priority] - priorityOrder[a.priority];
-            }
-            
-            if (a.dueDate && b.dueDate) {
-                return new Date(a.dueDate) - new Date(b.dueDate);
-            }
-            
-            return new Date(a.createdAt) - new Date(b.createdAt);
-        });
+        // Get sorted tasks
+        const sortedTasks = this.getSortedTasks();
+
+        // Add drag and drop event listeners to the container
+        tasksContainer.addEventListener('dragover', (e) => this.handleContainerDragOver(e));
+        tasksContainer.addEventListener('drop', (e) => this.handleContainerDrop(e));
 
         sortedTasks.forEach((task, index) => {
             const taskElement = document.createElement('div');
@@ -287,6 +252,7 @@ class SoloTask {
         };
         
         e.target.classList.add('task-dragging');
+        document.getElementById('tasks-container').classList.add('tasks-container-dragging');
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/html', e.target.outerHTML);
     }
@@ -294,18 +260,32 @@ class SoloTask {
     handleDragOver(e) {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
+        
+        // Clear previous hover states
+        this.clearDragStates();
+        
+        const taskElement = e.target.closest('[data-task-id]');
+        if (taskElement && taskElement !== this.draggedTask.element) {
+            const rect = taskElement.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+            
+            if (e.clientY < midY) {
+                taskElement.classList.add('task-drag-over-top');
+            } else {
+                taskElement.classList.add('task-drag-over-bottom');
+            }
+        }
     }
 
     handleDragEnter(e) {
         e.preventDefault();
-        if (e.target.closest('[data-task-id]') && e.target.closest('[data-task-id]') !== this.draggedTask.element) {
-            e.target.closest('[data-task-id]').classList.add('task-drag-over');
-        }
     }
 
     handleDragLeave(e) {
-        if (e.target.closest('[data-task-id]') && e.target.closest('[data-task-id]') !== this.draggedTask.element) {
-            e.target.closest('[data-task-id]').classList.remove('task-drag-over');
+        // Clear states when leaving the task element
+        if (e.target.closest('[data-task-id]')) {
+            const taskElement = e.target.closest('[data-task-id]');
+            taskElement.classList.remove('task-drag-over-top', 'task-drag-over-bottom');
         }
     }
 
@@ -315,26 +295,62 @@ class SoloTask {
         
         if (dropTarget && dropTarget !== this.draggedTask.element) {
             const dropIndex = parseInt(dropTarget.getAttribute('data-task-index'));
-            this.reorderTask(this.draggedTask.index, dropIndex);
+            const rect = dropTarget.getBoundingClientRect();
+            const midY = rect.top + rect.height / 2;
+            
+            // Determine if we're dropping above or below the target
+            const finalIndex = e.clientY < midY ? dropIndex : dropIndex + 1;
+            this.reorderTask(this.draggedTask.index, finalIndex);
         }
         
-        // Clean up visual indicators
-        document.querySelectorAll('.task-drag-over').forEach(el => {
-            el.classList.remove('task-drag-over');
-        });
+        this.clearDragStates();
     }
 
     handleDragEnd(e) {
         e.target.classList.remove('task-dragging');
-        document.querySelectorAll('.task-drag-over').forEach(el => {
-            el.classList.remove('task-drag-over');
-        });
+        document.getElementById('tasks-container').classList.remove('tasks-container-dragging');
+        this.clearDragStates();
         this.draggedTask = null;
     }
 
-    reorderTask(fromIndex, toIndex) {
-        // Get the sorted tasks (same sorting as renderTasks)
-        const sortedTasks = [...this.tasks].sort((a, b) => {
+    // Container-level drag handlers for more forgiving drop zones
+    handleContainerDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        // Find the closest task element
+        const taskElement = e.target.closest('[data-task-id]');
+        if (taskElement && taskElement !== this.draggedTask.element) {
+            // Let the task's own dragover handler deal with it
+            return;
+        }
+        
+        // Clear all drag states if we're not over a task
+        this.clearDragStates();
+    }
+
+    handleContainerDrop(e) {
+        e.preventDefault();
+        
+        // If we're dropping on the container but not on a specific task,
+        // drop at the end of the list
+        const dropTarget = e.target.closest('[data-task-id]');
+        if (!dropTarget && this.draggedTask) {
+            const sortedTasks = this.getSortedTasks();
+            this.reorderTask(this.draggedTask.index, sortedTasks.length);
+        }
+        
+        this.clearDragStates();
+    }
+
+    clearDragStates() {
+        document.querySelectorAll('.task-drag-over-top, .task-drag-over-bottom').forEach(el => {
+            el.classList.remove('task-drag-over-top', 'task-drag-over-bottom');
+        });
+    }
+
+    getSortedTasks() {
+        return [...this.tasks].sort((a, b) => {
             if (a.completed !== b.completed) {
                 return a.completed ? 1 : -1;
             }
@@ -354,10 +370,24 @@ class SoloTask {
             
             return new Date(a.createdAt) - new Date(b.createdAt);
         });
+    }
+
+    reorderTask(fromIndex, toIndex) {
+        // Don't reorder if same position
+        if (fromIndex === toIndex) return;
+        
+        // Get the sorted tasks
+        const sortedTasks = this.getSortedTasks();
+
+        // Adjust toIndex if moving from earlier position
+        let adjustedToIndex = toIndex;
+        if (fromIndex < toIndex) {
+            adjustedToIndex = toIndex - 1;
+        }
 
         // Move the task
         const [movedTask] = sortedTasks.splice(fromIndex, 1);
-        sortedTasks.splice(toIndex, 0, movedTask);
+        sortedTasks.splice(adjustedToIndex, 0, movedTask);
 
         // Update order property for all tasks
         sortedTasks.forEach((task, index) => {
