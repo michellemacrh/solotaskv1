@@ -1,104 +1,178 @@
-# SoloTask - Minimalist Task Manager
+# SoloTask V1 - Minimalist Task Manager
 
-A lightweight, client-side task management tool built with HTML, Tailwind CSS, and vanilla JavaScript. Perfect for solo users who want quick, frictionless task management without accounts or servers.
+![SoloTask Screenshot](https://github.com/michellemacrh/solotaskv1/blob/main/solotaskv1.png)
 
-## Features
+A clean, efficient task management application designed for personal productivity. SoloTask organizes your tasks by tags with a beautiful dark theme and intuitive interface.
 
-### Core Features
-- ✅ **Add Tasks**: Quick task input with title, due date, and priority
-- ✅ **Edit Tasks**: Click to edit task titles in place
-- ✅ **Mark Complete**: Check off completed tasks
-- ✅ **Delete Tasks**: Remove tasks you no longer need
-- ✅ **Drag & Drop Sorting**: Reorder tasks by dragging them up or down
-- ✅ **Persistent Storage**: All data saved to browser's localStorage
-- ✅ **Natural Language Dates**: Support for "today", "tomorrow", "next Monday", etc.
-- ✅ **Priority Levels**: High, Medium, Low with visual indicators
-- ✅ **Responsive Design**: Works on desktop and mobile devices
-- ✅ **Single View**: Clean, focused interface with all tasks in one view
+> **Built with Cursor AI IDE**: This project was created through vibe-coding sessions with Cursor AI, combining human creativity with AI assistance for rapid development and optimization.
 
-### User Experience
-- Clean, minimalist interface inspired by Todoist
-- Instant loading with no server required
-- Offline functionality
-- Dark/Light theme toggle
-- Keyboard shortcuts (Ctrl/Cmd + N for new task)
-- Visual priority indicators and due date formatting
-- Smooth drag-and-drop with visual feedback (opacity, rotation, border highlights)
-- Single-view design for focused task management
+## ✨ Features
 
-## Getting Started
+### 🏷️ **Tag-Based Organization**
+- **5 Built-in Categories**: Inbox, Next Action, Projects, Learning Topics, Someday
+- **Grouped View**: Tasks automatically organized by tags
+- **Collapsible Sections**: Show/hide tag groups as needed
+- **State Persistence**: Collapsed/expanded states saved between sessions
 
-1. **Clone or download** the repository
-2. **Open `index.html`** in any modern web browser
-3. **Start adding tasks** immediately - no setup required!
+### 🎯 **Task Management**
+- **Quick Add Modal**: Press Ctrl/Cmd+K for instant task creation from anywhere
+- **Click-to-Edit**: Single click on any task to edit inline
+- **Rich Task Details**: Title, due date, priority, tags, completion status
+- **Priority Levels**: High, Medium, Low with visual indicators
+- **Due Date Tracking**: Today, Tomorrow, Overdue status highlighting
+- **Auto-Cleanup**: Completed tasks automatically removed after 24 hours
 
-### Running with Local Server (Optional)
-```bash
-# Navigate to the project directory
-cd solotask
+### 🎨 **User Experience**
+- **Drag & Drop**: Move tasks between tag groups effortlessly
+- **Keyboard Shortcuts**: Multiple shortcuts for power users
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile
+- **Markdown Links**: Support for clickable links in task titles
 
-# Start a local HTTP server
-python3 -m http.server 8000
+### 📊 **Data Management**
+- **Local Storage**: All data stored in browser localStorage with error handling
+- **CSV Export**: Export tasks to spreadsheet format
+- **Auto-Save**: Changes saved automatically
+- **Data Safety**: No data loss with reliable local storage and backup options
 
-# Open http://localhost:8000 in your browser
-```
+### ⚡ **Performance**
+- **Instant Load**: No server dependencies - works offline
+- **Optimized DOM**: Cached elements and efficient rendering
+- **Smooth Interactions**: Optimized for responsive user experience
+- **Automatic Cleanup**: Keeps your task list focused and clutter-free
 
-## Usage
+## 🚀 Getting Started
 
-### Adding Tasks
-1. Type your task in the input field
-2. Optionally add a due date using natural language ("tomorrow", "next Monday")
-3. Select priority level (Low, Medium, High)
-4. Press Enter or click the + button
+### Quick Start
+1. **Download**: Clone or download the repository
+2. **Open**: Simply open `index.html` in your web browser (no server needed!)
+3. **Start Using**: No setup required - start adding tasks immediately!
 
-### Reordering Tasks
-1. **Drag and Drop**: Click and hold the grip icon (⋮⋮) on the left of any task
-2. **Drag** the task to your desired position
-3. **Drop** it between other tasks to reorder
-4. **Order is preserved** automatically and saved to localStorage
+> **Note**: This is a standalone HTML application. No server, installation, or setup required. Just open the HTML file in any modern browser.
 
-### Keyboard Shortcuts
-- `Ctrl/Cmd + N`: Focus on task input
-- `Enter`: Save task
-- `Escape`: Cancel editing
-
-## Data Storage
-
-All data is stored locally in your browser using localStorage. This means:
-- ✅ No server required
-- ✅ Works offline
-- ✅ Data persists between sessions
-- ⚠️ Data is tied to your browser/device
-- ⚠️ Clearing browser data will remove all tasks
-
-## Browser Support
-
-Works in all modern browsers that support:
-- ES6+ JavaScript
-- localStorage
-- CSS Grid/Flexbox
-
-## File Structure
-
+### File Structure
 ```
 solotask/
-├── index.html      # Main HTML file
-├── script.js       # All JavaScript functionality
-└── README.md       # This file
+├── index.html          # Main application file
+├── script.js           # JavaScript functionality
+├── solotaskV1.png      # Application screenshot
+└── README.md          # This file
 ```
 
-## Technical Details
+## 📝 How to Use
 
-- **No dependencies** - Uses Tailwind CSS via CDN
-- **Vanilla JavaScript** - No frameworks required
-- **Client-side only** - No backend server needed
-- **Responsive design** - Mobile-first approach
-- **Accessible** - Basic ARIA support included
+### Adding Tasks
 
-## Contributing
+**Quick Add (Recommended):**
+1. Press **Ctrl/Cmd + K** to open the quick add modal
+2. Type your task title
+3. Optionally set tag, priority, and due date
+4. Press Enter or click "Add Task"
 
-This is a simple, standalone project. Feel free to fork and modify for your needs!
+**Standard Form:**
+1. Type your task in the input field
+2. Set due date (optional)
+3. Choose priority level (defaults to Medium)
+4. Select appropriate tag category
+5. Press Enter or click the + button
 
-## License
+### Managing Tasks
+- **Edit**: Click on any task to edit inline
+- **Complete**: Check the checkbox to mark as done
+- **Delete**: Click the delete button when editing a task or use Shift+Delete
+- **Move**: Drag tasks between different tag groups
+- **Organize**: Collapse/expand tag sections as needed
+- **Links**: Add clickable links using markdown syntax: `[Link Text](URL)`
 
-Open source - feel free to use and modify as needed. 
+### Keyboard Shortcuts
+- **Ctrl/Cmd + K**: Open quick add modal ⭐
+- **Enter**: Save task (when adding/editing)
+- **Escape**: Cancel edit mode or close quick add modal
+- **Shift + Delete**: Delete task (when editing)
+
+### Export Data
+- Click the "Export CSV" button in the header
+- Downloads a spreadsheet with all your tasks
+- Includes: Title, Tag, Priority, Due Date, Status, Created Date, Completed Date
+
+## 🎯 Task Categories
+
+### 📥 **Inbox**
+Default category for new tasks and quick captures
+
+### ▶️ **Next Action**
+Tasks ready to be worked on immediately
+
+### 📁 **Projects**
+Multi-step tasks and larger initiatives
+
+### 🎓 **Learning Topics**
+Educational content and skill development
+
+### 🕐 **Someday**
+Ideas and tasks for future consideration
+
+## 💡 Pro Tips
+
+### Productivity Workflow
+1. **Capture**: Add everything to Inbox initially
+2. **Organize**: Move tasks to appropriate categories
+3. **Prioritize**: Set priority levels for better focus
+4. **Focus**: Collapse completed sections to reduce clutter
+5. **Review**: Export CSV periodically for analysis
+
+### Best Practices
+- Use specific, actionable task titles
+- Set realistic due dates
+- Review and organize tasks regularly
+- Let auto-cleanup keep your list focused
+- Export data periodically for backup
+
+## 🔧 Technical Details
+
+### Browser Compatibility
+- Modern browsers (Chrome, Firefox, Safari, Edge)
+- JavaScript enabled
+- Local storage support required
+
+### Data Storage
+- **Primary**: Browser localStorage with error handling
+- **Backup**: CSV export functionality
+- **Privacy**: All data stays on your device
+
+### Auto-Cleanup System
+- Completed tasks automatically removed after 24 hours
+- Cleanup runs on app start and hourly intervals
+- Backwards compatible with existing data
+- Console logging for cleanup activities
+
+### Performance Optimizations
+- Cached DOM elements for faster access
+- Consolidated save/render operations
+- Efficient event handling
+- Optimized rendering pipeline
+
+## 🛡️ Privacy & Security
+
+- **No External Servers**: Everything runs locally in your browser
+- **No Data Collection**: Zero tracking or analytics
+- **Complete Privacy**: Your tasks never leave your device
+- **Offline Ready**: Works without internet connection
+
+## 🤖 Development
+
+### Built with Cursor AI IDE
+This project was developed through an innovative "vibe-coding" approach using Cursor AI IDE, where:
+- **Human creativity** guided the vision and user experience decisions
+- **AI assistance** accelerated development, optimization, and code quality
+- **Collaborative coding** enabled rapid iteration and feature refinement
+- **Code optimization** was enhanced through AI-powered analysis and suggestions
+
+The result is a polished, performant application that combines thoughtful design with clean, maintainable code.
+
+## 🤝 Contributing
+
+This is a personal productivity tool designed for simplicity and focus. The current feature set is intentionally minimal to avoid feature bloat.
+
+## 📄 License
+
+This project is open source and available under the MIT License.

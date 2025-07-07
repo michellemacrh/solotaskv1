@@ -3,162 +3,1364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoloTask - Minimalist Task Manager</title>
+    <title>SoloTask V1 - Minimalist Task Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background-color: #0d1117;
+            color: #e6edf3;
+            line-height: 1.6;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #161b22;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #484f58;
+        }
+        
+        /* Container and Layout */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        
+        .space-y-6 > * + * {
+            margin-top: 24px;
+        }
+
+        /* Header styles */
+        .header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 16px 24px;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .header h1 {
+            color: #e6edf3;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .export-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .export-btn:hover {
+            background: #30363d;
+            border-color: #484f58;
+            color: #58a6ff;
+        }
+        
+        .export-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .export-btn i {
+            font-size: 0.875rem;
+        }
+        
+
+        
+        /* Card styles */
+        .card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            border-color: #484f58;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Task count styles */
+        .task-count-container {
+            margin-bottom: 16px;
+        }
+        
+        .task-count-text {
+            color: #7d8590;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin: 0;
+            text-align: center;
+        }
+        
+        /* Input styles */
+        .input {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #e6edf3;
+            padding: 12px 16px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+        
+        .input:focus {
+            outline: none;
+            border-color: #2f81f7;
+            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.1);
+            background: #161b22;
+        }
+        
+        .input::placeholder {
+            color: #7d8590;
+        }
+        
+        /* Date input specific styling for dark mode */
+        .input[type="date"] {
+            color-scheme: dark;
+            position: relative;
+        }
+        
+        .input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+        
+        /* Custom calendar icon overlay */
+        .input[type="date"] {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%237d8590' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px 16px;
+            padding-right: 32px;
+        }
+        
+        .input[type="date"]:hover {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e6edf3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+            background-position: right 10px center;
+            border-color: #484f58;
+            background-color: #161b22;
+        }
+        
+        .input[type="date"]:focus {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232f81f7' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+            background-position: right 10px center;
+            outline: none;
+            border-color: #2f81f7;
+            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.1);
+            background-color: #161b22;
+        }
+        
+        /* Date text styling */
+        .input[type="date"]::-webkit-datetime-edit {
+            color: #e6edf3;
+            padding: 0;
+        }
+        
+        .input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+            padding: 0;
+        }
+        
+        .input[type="date"]::-webkit-datetime-edit-text {
+            color: #7d8590;
+            padding: 0 2px;
+        }
+        
+        .input[type="date"]::-webkit-datetime-edit-month-field,
+        .input[type="date"]::-webkit-datetime-edit-day-field,
+        .input[type="date"]::-webkit-datetime-edit-year-field {
+            color: #e6edf3;
+            background: transparent;
+            border: none;
+            padding: 0 2px;
+        }
+        
+        .input[type="date"]::-webkit-datetime-edit-month-field:focus,
+        .input[type="date"]::-webkit-datetime-edit-day-field:focus,
+        .input[type="date"]::-webkit-datetime-edit-year-field:focus {
+            background: rgba(47, 129, 247, 0.1);
+            color: #2f81f7;
+            outline: none;
+            border-radius: 2px;
+        }
+        
+        /* Hide native spinner buttons */
+        .input[type="date"]::-webkit-inner-spin-button,
+        .input[type="date"]::-webkit-clear-button {
+            display: none;
+        }
+        
+        /* Firefox specific styling */
+        .input[type="date"]::-moz-focus-inner {
+            border: 0;
+        }
+        
+        /* Placeholder-like styling when empty */
+        .input[type="date"]:invalid {
+            color: #7d8590;
+        }
+        
+        .input[type="date"]:valid {
+            color: #e6edf3;
+        }
+        
+        /* Force dark theme for the calendar popup */
+        .input[type="date"] {
+            color-scheme: dark;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .input[type="date"] {
+                color-scheme: dark;
+            }
+        }
+        
+        /* Additional styling for better integration */
+        .input[type="date"]::placeholder {
+            color: #7d8590;
+        }
+        
+        /* Button styles */
+        .btn-primary {
+            background: #238636;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #2ea043;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        /* Task styles */
+        .task {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 8px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .task:hover {
+            background: #21262d;
+            border-color: #484f58;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .task:active {
+            transform: translateY(0);
+        }
+        
         .task-completed {
-            text-decoration: line-through;
             opacity: 0.6;
+            background: #161b22;
         }
+        
+        .task-completed .task-title {
+            text-decoration: line-through;
+            color: #7d8590;
+        }
+        
+        .task-completed:hover {
+            background: #1c2128;
+        }
+        
+        .task-title {
+            color: #e6edf3;
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin: 0 0 2px 0;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        
+        .task-link {
+            color: #58a6ff;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .task-link:hover {
+            color: #79c0ff;
+            border-bottom-color: #58a6ff;
+        }
+        
+        .task-link:visited {
+            color: #bc8cff;
+        }
+        
+        .task-link:visited:hover {
+            color: #d2a8ff;
+            border-bottom-color: #bc8cff;
+        }
+        
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-top: 2px;
+        }
+        
+        .task-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        
+        .task-tag {
+            background: #1f2937;
+            color: #9ca3af;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border: 1px solid #374151;
+            transition: all 0.2s ease;
+        }
+        
+        .task-tag:hover {
+            background: #374151;
+            color: #e5e7eb;
+            border-color: #4b5563;
+        }
+        
+        .task-content {
+            padding-top: 3px;
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .task-main {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        /* Checkbox styles */
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #484f58;
+            border-radius: 6px;
+            background: #0d1117;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        .checkbox:hover {
+            border-color: #2f81f7;
+            background: #161b22;
+            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.1);
+        }
+        
+        .checkbox:checked {
+            background: #2f81f7;
+            border-color: #2f81f7;
+            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.1);
+        }
+        
+        .checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 1px;
+            left: 4px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .checkbox:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.2);
+        }
+        
+        /* Priority indicators */
         .priority-high {
-            border-left: 4px solid #ef4444;
+            border-left: 3px solid #da3633;
         }
+        
         .priority-medium {
-            border-left: 4px solid #f59e0b;
+            border-left: 3px solid #fb8500;
         }
+        
         .priority-low {
-            border-left: 4px solid #10b981;
+            border-left: 3px solid #238636;
         }
-        .drag-handle {
-            cursor: grab;
-            opacity: 0.5;
-            transition: opacity 0.2s;
+        
+        /* Kanban task priority indicators */
+        .kanban-task.priority-high {
+            border-left: 3px solid #da3633;
         }
-        .drag-handle:hover {
-            opacity: 1;
+        
+        .kanban-task.priority-medium {
+            border-left: 3px solid #fb8500;
         }
-        .drag-handle:active {
-            cursor: grabbing;
+        
+        .kanban-task.priority-low {
+            border-left: 3px solid #238636;
         }
+        
+        /* Due date styles */
+        .due-date {
+            color: #7d8590;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 4px 8px;
+            background: #21262d;
+            border-radius: 4px;
+            border: 1px solid #30363d;
+            display: inline-block;
+            width: auto;
+            flex-shrink: 0;
+        }
+        
+        .due-date.overdue {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border-color: #da3633;
+        }
+        
+        .due-date.today {
+            color: #fb8500;
+            background: rgba(251, 133, 0, 0.1);
+            border-color: #fb8500;
+        }
+        
+        /* Edit mode styles */
+        .edit-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .edit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .edit-row > * {
+            flex: 1;
+        }
+        
+        /* Edit form actions */
+        .edit-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #30363d;
+        }
+        
+        .delete-btn {
+            background: #21262d;
+            color: #f85149;
+            border: 1px solid #f85149;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 80px;
+            justify-content: center;
+        }
+        
+        .delete-btn:hover {
+            background: #f85149;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(248, 81, 73, 0.25);
+        }
+        
+        .delete-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(248, 81, 73, 0.25);
+        }
+        
+        .delete-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(248, 81, 73, 0.2);
+        }
+        
+        /* Drag and drop styles */
         .task-dragging {
             opacity: 0.5;
-            transform: rotate(2deg);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: rotate(2deg) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
             z-index: 1000;
+            border-color: #2f81f7;
         }
-        .task-drag-over-top {
-            border-top: 3px solid #3b82f6;
-            background-color: #f8faff;
-        }
-        .task-drag-over-bottom {
-            border-bottom: 3px solid #3b82f6;
-            background-color: #f8faff;
-        }
-        .tasks-container-dragging {
-            background-color: #f9fafb;
-        }
+        
         .insertion-indicator {
-            height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            height: 2px;
+            background: #2f81f7;
             border-radius: 2px;
             margin: 4px 0;
             opacity: 0;
             transition: opacity 0.2s ease;
             position: relative;
-            pointer-events: none;
         }
+        
         .insertion-indicator.active {
             opacity: 1;
+            box-shadow: 0 0 8px rgba(47, 129, 247, 0.5);
         }
-        .insertion-indicator::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: -3px;
-            width: 9px;
-            height: 9px;
-            background: #3b82f6;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
+        
+        .insertion-indicator::before,
         .insertion-indicator::after {
             content: '';
             position: absolute;
-            right: -6px;
             top: -3px;
-            width: 9px;
-            height: 9px;
-            background: #3b82f6;
+            width: 8px;
+            height: 8px;
+            background: #2f81f7;
             border-radius: 50%;
-            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(47, 129, 247, 0.5);
+        }
+        
+        .insertion-indicator::before {
+            left: -4px;
+        }
+        
+        .insertion-indicator::after {
+            right: -4px;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 64px 32px;
+            color: #7d8590;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #e6edf3;
+        }
+        
+        .empty-state p {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+        
+        /* Select styles */
+        .select {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: #e6edf3;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23848d97' d='M4.427 7.427l3.396 3.396a.25.25 0 00.354 0l3.396-3.396A.25.25 0 0011.396 7H4.604a.25.25 0 00-.177.427z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px;
+            padding-right: 32px;
+        }
+        
+        .select:focus {
+            outline: none;
+            border-color: #2f81f7;
+            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.1);
+        }
+        
+        .select option {
+            background: #21262d;
+            color: #e6edf3;
+        }
+        
+        /* Task actions removed - using single click to edit */
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .task {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+            color: #7d8590;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            color: #484f58;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #e6edf3;
+        }
+        
+        .empty-state p {
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        
+        @media (max-width: 640px) {
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .edit-row {
+                flex-direction: column;
+            }
+        }
+        
+        .text-sm {
+            font-size: 0.875rem;
+        }
+        
+        .task-form-container {
+            margin-bottom: 24px;
+        }
+        
+        .task-form {
+            margin-bottom: 0;
+        }
+        
+        .task-input-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .task-input-main {
+            flex: 1;
+            border-radius: 8px;
+            height: 48px;
+            font-size: 1rem;
+            padding: 12px 16px;
+        }
+        
+        .add-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 0 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+        }
+        
+        .add-btn:hover {
+            background: #2ea043;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(35, 134, 54, 0.3);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 2fr;
+            gap: 16px;
+            align-items: end;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-label {
+            color: #7d8590;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        
+        .input, .select {
+            height: 40px;
+            font-size: 0.875rem;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        
+        /* Tag Group Styles */
+        .tag-group {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+        
+        .tag-group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #0d1117;
+            border-bottom: 1px solid #30363d;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .tag-group-header:hover {
+            background: #161b22;
+        }
+        
+        .tag-group-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e6edf3;
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .tag-group-arrow {
+            color: #7d8590;
+            font-size: 0.75rem;
+            transition: transform 0.2s ease;
+            margin-left: 4px;
+        }
+        
+        .tag-group-arrow.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .tag-group-title i {
+            font-size: 0.875rem;
+            color: #7d8590;
+        }
+        
+        .tag-group-count {
+            background: #30363d;
+            color: #e6edf3;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .tag-group-tasks {
+            padding: 12px;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+        
+        .tag-group-tasks.collapsed {
+            max-height: 0;
+            padding: 0 12px;
+        }
+        
+        .tag-group-tasks .task {
+            margin-bottom: 8px;
+        }
+        
+        .tag-group-tasks .task:last-child {
+            margin-bottom: 0;
+        }
+        
+        .tag-group-empty {
+            padding: 32px 20px;
+            text-align: center;
+            color: #7d8590;
+            font-size: 0.875rem;
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+        
+        .tag-group-empty.collapsed {
+            max-height: 0;
+            padding: 0 20px;
+        }
+        
+        /* Tag group drag and drop states */
+        .tag-group-drag-over {
+            border-color: #2f81f7;
+            background: rgba(47, 129, 247, 0.05);
+            transform: scale(1.02);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(47, 129, 247, 0.2);
+        }
+        
+        .tag-group-drag-over .tag-group-header {
+            background: rgba(47, 129, 247, 0.1);
+            border-bottom-color: #2f81f7;
+        }
+        
+        .tag-group-drag-over .tag-group-title {
+            color: #58a6ff;
+        }
+        
+        /* Responsive adjustments for mobile */
+        @media (max-width: 767px) {
+            .tag-group-header {
+                padding: 12px 16px;
+            }
+            
+            .tag-group-title {
+                font-size: 0.9375rem;
+            }
+            
+            .tag-group-tasks {
+                padding: 8px;
+            }
+            
+            .tag-group-empty {
+                padding: 24px 16px;
+            }
+        }
+
+        /* Quick Add Modal */
+        .quick-add-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .quick-add-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .quick-add-content {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            transform: scale(0.95) translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .quick-add-modal.active .quick-add-content {
+            transform: scale(1) translateY(0);
+        }
+        
+        .quick-add-header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #30363d;
+        }
+        
+        .quick-add-header h3 {
+            color: #e6edf3;
+            font-size: 1.375rem;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.025em;
+        }
+        
+        .quick-add-header p {
+            color: #7d8590;
+            font-size: 0.875rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .quick-add-header kbd {
+            background: #21262d;
+            color: #e6edf3;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+            margin: 0 2px;
+            border: 1px solid #30363d;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .quick-add-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .quick-add-input {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 1rem;
+            color: #e6edf3;
+            outline: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        
+        .quick-add-input:focus {
+            border-color: #2f81f7;
+            background: #161b22;
+            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.12);
+        }
+        
+        .quick-add-input::placeholder {
+            color: #7d8590;
+        }
+        
+        .quick-add-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .quick-add-select {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.875rem;
+            color: #e6edf3;
+            outline: none;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 400;
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        
+        .quick-add-select:focus {
+            border-color: #2f81f7;
+            background-color: #161b22;
+            box-shadow: 0 0 0 3px rgba(47, 129, 247, 0.12);
+        }
+        
+        .quick-add-select:hover {
+            border-color: #484f58;
+        }
+        
+        .quick-add-select option {
+            background: #161b22;
+            color: #e6edf3;
+            padding: 8px 12px;
+        }
+        
+        /* Special styling for date input */
+        .quick-add-select[type="date"] {
+            background-image: none;
+            padding-right: 16px;
+            color-scheme: dark;
+        }
+        
+        .quick-add-select[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.7;
+            cursor: pointer;
+        }
+        
+        .quick-add-select[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+        
+        .quick-add-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 8px;
+            padding-top: 20px;
+            border-top: 1px solid #30363d;
+        }
+        
+        .quick-add-cancel,
+        .quick-add-submit {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            outline: none;
+            letter-spacing: 0.025em;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quick-add-cancel {
+            background: transparent;
+            color: #7d8590;
+            border: 1px solid #30363d;
+        }
+        
+        .quick-add-cancel:hover {
+            background: #21262d;
+            color: #e6edf3;
+            border-color: #484f58;
+            transform: translateY(-1px);
+        }
+        
+        .quick-add-cancel:active {
+            transform: translateY(0);
+        }
+        
+        .quick-add-submit {
+            background: linear-gradient(135deg, #2f81f7 0%, #1f6feb 100%);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(47, 129, 247, 0.3);
+        }
+        
+        .quick-add-submit:hover {
+            background: linear-gradient(135deg, #1f6feb 0%, #0969da 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(47, 129, 247, 0.4);
+        }
+        
+        .quick-add-submit:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(47, 129, 247, 0.3);
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 767px) {
+            .quick-add-content {
+                padding: 24px 20px;
+                margin: 16px;
+                max-width: calc(100% - 32px);
+                width: calc(100% - 32px);
+            }
+            
+            .quick-add-header {
+                margin-bottom: 24px;
+                padding-bottom: 16px;
+            }
+            
+            .quick-add-header h3 {
+                font-size: 1.25rem;
+            }
+            
+            .quick-add-form {
+                gap: 18px;
+            }
+            
+            .quick-add-options {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .quick-add-actions {
+                flex-direction: column-reverse;
+                gap: 12px;
+                padding-top: 16px;
+            }
+            
+            .quick-add-cancel,
+            .quick-add-submit {
+                padding: 14px 20px;
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+            
+            .quick-add-submit {
+                order: -1;
+            }
+        }
+        
+        /* Extra small mobile devices */
+        @media (max-width: 480px) {
+            .quick-add-content {
+                padding: 20px 16px;
+                margin: 12px;
+                max-width: calc(100% - 24px);
+                width: calc(100% - 24px);
+            }
+            
+            .quick-add-header h3 {
+                font-size: 1.125rem;
+            }
+            
+            .quick-add-header p {
+                font-size: 0.8125rem;
+            }
+            
+            .quick-add-input {
+                padding: 12px 14px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .quick-add-select {
+                padding: 10px 14px;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body>
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200">
-        <div class="max-w-4xl mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-check-circle text-blue-500 text-2xl"></i>
-                    <h1 class="text-2xl font-bold text-gray-800">SoloTask</h1>
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-brand">
+                    <i class="fas fa-check-circle text-blue-500 text-xl"></i>
+                    <h1>SoloTask</h1>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <button id="theme-toggle" class="p-2 rounded-md hover:bg-gray-100 transition-colors">
-                        <i class="fas fa-moon text-gray-600"></i>
+                <div class="header-actions">
+                    <button id="export-csv-btn" class="export-btn" title="Export tasks to CSV">
+                        <i class="fas fa-download"></i>
+                        <span>Export CSV</span>
                     </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <div class="max-w-4xl mx-auto px-4 py-6">
+    <div class="container">
         <div class="space-y-6">
-            <!-- Header with Task Count -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                <div class="text-center">
-                    <h2 class="text-xl font-bold text-gray-800 mb-1">My Tasks</h2>
-                    <p id="task-count" class="text-sm text-gray-500">0 tasks</p>
-                </div>
+            <!-- Task Count -->
+            <div class="task-count-container">
+                <p id="task-count" class="task-count-text">0 tasks</p>
             </div>
 
             <!-- Add Task Form -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-                <div class="flex gap-3">
-                    <input 
-                        type="text" 
-                        id="task-input" 
-                        placeholder="Add a task..." 
-                        class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    >
-                    <button id="add-task-btn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-                
-                <!-- Task Options -->
-                <div class="mt-3 flex flex-col sm:flex-row gap-2">
-                    <input 
-                        type="text" 
-                        id="due-date-input" 
-                        placeholder="Due date (e.g., tomorrow, next Monday)" 
-                        class="flex-1 px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    >
-                    <select id="priority-select" class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="low">Low Priority</option>
-                        <option value="medium">Medium Priority</option>
-                        <option value="high">High Priority</option>
-                    </select>
-                </div>
+            <div class="task-form-container">
+                <form class="task-form">
+                    <div class="task-input-row">
+                        <input 
+                            type="text" 
+                            id="task-input" 
+                            class="input task-input-main" 
+                            placeholder="Add a task..."
+                            autocomplete="off"
+                            tabindex="1"
+                        >
+                        <button type="submit" class="add-btn" tabindex="5">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Due Date</label>
+                            <input 
+                                type="date" 
+                                id="due-date-input" 
+                                class="input" 
+                                autocomplete="off"
+                                tabindex="2"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Priority</label>
+                            <select id="priority-select" class="select" tabindex="3">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tag</label>
+                            <select id="tag-select" class="select" tabindex="4">
+                                <option value="Inbox">Inbox</option>
+                                <option value="Next Action">Next Action</option>
+                                <option value="Projects">Projects</option>
+                                <option value="Learning Topics">Learning Topics</option>
+                                <option value="Someday">Someday</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
             </div>
 
-            <!-- Task List -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div id="tasks-container" class="divide-y divide-gray-200">
-                    <!-- Tasks will be populated here -->
-                </div>
-                
-                <!-- Empty State -->
-                <div id="empty-state" class="p-8 text-center text-gray-500">
-                    <i class="fas fa-clipboard-list text-4xl mb-4"></i>
-                    <p class="text-lg">No tasks yet</p>
-                    <p class="text-sm">Add your first task to get started</p>
-                </div>
+            <!-- Task List View -->
+            <div id="list-view" class="space-y-6">
+                <!-- Tasks will be grouped by tags here -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state card">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>No tasks yet</h3>
+                <p>Add your first task to get started</p>
             </div>
         </div>
     </div>
 
-    <script src="script.js?v=6"></script>
+    <!-- Quick Add Modal -->
+    <div id="quick-add-modal" class="quick-add-modal">
+        <div class="quick-add-content">
+            <div class="quick-add-header">
+                <h3>Quick Add Task</h3>
+                <p>Press <kbd>⌘</kbd> + <kbd>K</kbd> to quickly add tasks</p>
+            </div>
+            <form id="quick-add-form" class="quick-add-form">
+                <input 
+                    type="text" 
+                    id="quick-add-input" 
+                    class="quick-add-input" 
+                    placeholder="What needs to be done?"
+                    autocomplete="off"
+                >
+                <div class="quick-add-options">
+                    <select id="quick-add-tag" class="quick-add-select">
+                        <option value="Inbox">📥 Inbox</option>
+                        <option value="Next Action">▶️ Next Action</option>
+                        <option value="Projects">📁 Projects</option>
+                        <option value="Learning Topics">🎓 Learning Topics</option>
+                        <option value="Someday">🕐 Someday</option>
+                    </select>
+                    <select id="quick-add-priority" class="quick-add-select">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <input 
+                        type="date" 
+                        id="quick-add-due" 
+                        class="quick-add-select"
+                        title="Due date"
+                    >
+                </div>
+                <div class="quick-add-actions">
+                    <button type="button" class="quick-add-cancel">Cancel</button>
+                    <button type="submit" class="quick-add-submit">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html> 
