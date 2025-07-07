@@ -11,19 +11,20 @@ A lightweight, client-side task management tool built with HTML, Tailwind CSS, a
 - ✅ **Delete Tasks**: Remove tasks you no longer need
 - ✅ **Drag & Drop Sorting**: Reorder tasks by dragging them up or down
 - ✅ **Persistent Storage**: All data saved to browser's localStorage
-- ✅ **Boards**: Organize tasks into custom boards (Projects, Next Actions, etc.)
 - ✅ **Natural Language Dates**: Support for "today", "tomorrow", "next Monday", etc.
 - ✅ **Priority Levels**: High, Medium, Low with visual indicators
 - ✅ **Responsive Design**: Works on desktop and mobile devices
+- ✅ **Single View**: Clean, focused interface with all tasks in one view
 
 ### User Experience
 - Clean, minimalist interface inspired by Todoist
 - Instant loading with no server required
 - Offline functionality
 - Dark/Light theme toggle
-- Keyboard shortcuts (Ctrl/Cmd + N for new task, Ctrl/Cmd + B for new board)
+- Keyboard shortcuts (Ctrl/Cmd + N for new task)
 - Visual priority indicators and due date formatting
 - Smooth drag-and-drop with visual feedback (opacity, rotation, border highlights)
+- Single-view design for focused task management
 
 ## Getting Started
 
@@ -56,16 +57,9 @@ python3 -m http.server 8000
 3. **Drop** it between other tasks to reorder
 4. **Order is preserved** automatically and saved to localStorage
 
-### Managing Boards
-- **Create Board**: Click "New Board" in the header
-- **Switch Board**: Click on any board name in the sidebar
-- **Edit Board**: Click the edit icon next to a board name
-- **Delete Board**: Switch to the board and click the trash icon
-
 ### Keyboard Shortcuts
 - `Ctrl/Cmd + N`: Focus on task input
-- `Ctrl/Cmd + B`: Create new board
-- `Enter`: Save task or board
+- `Enter`: Save task
 - `Escape`: Cancel editing
 
 ## Data Storage
