@@ -20,10 +20,6 @@
         .priority-low {
             border-left: 4px solid #10b981;
         }
-        .board-active {
-            background-color: #f3f4f6;
-            border-left: 3px solid #3b82f6;
-        }
         .drag-handle {
             cursor: grab;
             opacity: 0.5;
@@ -146,22 +142,7 @@
         </div>
     </div>
 
-    <!-- Modal for adding/editing boards -->
-    <div id="board-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 id="board-modal-title" class="text-lg font-semibold mb-4">New Board</h3>
-            <input 
-                type="text" 
-                id="board-name-input" 
-                placeholder="Board name" 
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 mb-4"
-            >
-            <div class="flex justify-end gap-2">
-                <button id="cancel-board-btn" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
-                <button id="save-board-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">Save</button>
-            </div>
-        </div>
-    </div>
+
 
     <script src="script.js"></script>
 </body>
