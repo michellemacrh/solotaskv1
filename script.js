@@ -11,10 +11,14 @@ class SoloTask {
     }
 
     init() {
+        console.log('SoloTask init called');
         this.loadData();
+        console.log('Data loaded, tasks:', this.tasks);
         this.setupEventListeners();
+        console.log('Event listeners set up');
         this.renderTasks();
         this.updateTaskCount();
+        console.log('Initialization complete');
     }
 
     // Data Management
@@ -58,11 +62,19 @@ class SoloTask {
 
     // Task Management
     addTask() {
+        console.log('addTask called');
         const taskInput = document.getElementById('task-input');
         const dueDateInput = document.getElementById('due-date-input');
         const prioritySelect = document.getElementById('priority-select');
 
+        console.log('Elements found:', {
+            taskInput: !!taskInput,
+            dueDateInput: !!dueDateInput,
+            prioritySelect: !!prioritySelect
+        });
+
         const title = taskInput.value.trim();
+        console.log('Task title:', title);
         if (!title) return;
 
         const task = {
@@ -152,10 +164,17 @@ class SoloTask {
     // Rendering
 
     renderTasks() {
+        console.log('renderTasks called, tasks.length:', this.tasks.length);
         const tasksContainer = document.getElementById('tasks-container');
         const emptyState = document.getElementById('empty-state');
         
+        console.log('DOM elements found:', {
+            tasksContainer: !!tasksContainer,
+            emptyState: !!emptyState
+        });
+        
         if (this.tasks.length === 0) {
+            console.log('Showing empty state');
             tasksContainer.style.display = 'none';
             emptyState.style.display = 'block';
             return;
