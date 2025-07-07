@@ -9,6 +9,7 @@ A lightweight, client-side task management tool built with HTML, Tailwind CSS, a
 - ✅ **Edit Tasks**: Click to edit task titles in place
 - ✅ **Mark Complete**: Check off completed tasks
 - ✅ **Delete Tasks**: Remove tasks you no longer need
+- ✅ **Drag & Drop Sorting**: Reorder tasks by dragging them up or down
 - ✅ **Persistent Storage**: All data saved to browser's localStorage
 - ✅ **Boards**: Organize tasks into custom boards (Projects, Next Actions, etc.)
 - ✅ **Natural Language Dates**: Support for "today", "tomorrow", "next Monday", etc.
@@ -22,6 +23,7 @@ A lightweight, client-side task management tool built with HTML, Tailwind CSS, a
 - Dark/Light theme toggle
 - Keyboard shortcuts (Ctrl/Cmd + N for new task, Ctrl/Cmd + B for new board)
 - Visual priority indicators and due date formatting
+- Smooth drag-and-drop with visual feedback (opacity, rotation, border highlights)
 
 ## Getting Started
 
@@ -47,6 +49,12 @@ python3 -m http.server 8000
 2. Optionally add a due date using natural language ("tomorrow", "next Monday")
 3. Select priority level (Low, Medium, High)
 4. Press Enter or click the + button
+
+### Reordering Tasks
+1. **Drag and Drop**: Click and hold the grip icon (⋮⋮) on the left of any task
+2. **Drag** the task to your desired position
+3. **Drop** it between other tasks to reorder
+4. **Order is preserved** automatically and saved to localStorage
 
 ### Managing Boards
 - **Create Board**: Click "New Board" in the header
