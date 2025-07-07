@@ -24,6 +24,31 @@
             background-color: #f3f4f6;
             border-left: 3px solid #3b82f6;
         }
+        .drag-handle {
+            cursor: grab;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .drag-handle:hover {
+            opacity: 1;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+        .task-dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+        }
+        .task-drag-over {
+            border-top: 2px solid #3b82f6;
+        }
+        .task-drop-zone {
+            background-color: #f0f9ff;
+            border: 2px dashed #3b82f6;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 4px 0;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">

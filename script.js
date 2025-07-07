@@ -7,6 +7,7 @@ class SoloTask {
         this.currentBoard = 'inbox';
         this.tasks = {};
         this.editingTask = null;
+        this.draggedTask = null;
         
         this.init();
     }
@@ -114,7 +115,8 @@ class SoloTask {
             priority: prioritySelect.value,
             dueDate: this.parseDueDate(dueDateInput.value.trim()),
             createdAt: new Date().toISOString(),
-            boardId: this.currentBoard
+            boardId: this.currentBoard,
+            order: this.tasks[this.currentBoard] ? this.tasks[this.currentBoard].length : 0
         };
 
         if (!this.tasks[this.currentBoard]) {
@@ -325,10 +327,15 @@ class SoloTask {
         emptyState.style.display = 'none';
         tasksContainer.innerHTML = '';
 
-        // Sort tasks: incomplete first, then by priority, then by due date
+        // Sort tasks: incomplete first, then by order (if exists), then by priority, then by due date
         const sortedTasks = [...currentTasks].sort((a, b) => {
             if (a.completed !== b.completed) {
                 return a.completed ? 1 : -1;
+            }
+            
+            // Use order if it exists, otherwise fall back to other sorting
+            if (a.order !== undefined && b.order !== undefined) {
+                return a.order - b.order;
             }
             
             const priorityOrder = { high: 3, medium: 2, low: 1 };
@@ -343,16 +350,21 @@ class SoloTask {
             return new Date(a.createdAt) - new Date(b.createdAt);
         });
 
-        sortedTasks.forEach(task => {
+        sortedTasks.forEach((task, index) => {
             const taskElement = document.createElement('div');
             taskElement.className = `flex items-center p-4 hover:bg-gray-50 transition-colors priority-${task.priority}`;
             taskElement.setAttribute('data-task-id', task.id);
+            taskElement.setAttribute('data-task-index', index);
+            taskElement.setAttribute('draggable', 'true');
 
             const dueDateDisplay = task.dueDate ? this.formatDueDate(task.dueDate) : '';
             const priorityIcon = this.getPriorityIcon(task.priority);
 
             taskElement.innerHTML = `
                 <div class="flex items-center flex-1">
+                    <div class="drag-handle mr-2 p-1">
+                        <i class="fas fa-grip-vertical text-gray-400"></i>
+                    </div>
                     <input 
                         type="checkbox" 
                         ${task.completed ? 'checked' : ''} 
@@ -376,6 +388,14 @@ class SoloTask {
                     </button>
                 </div>
             `;
+
+            // Add drag event listeners
+            taskElement.addEventListener('dragstart', (e) => this.handleDragStart(e));
+            taskElement.addEventListener('dragover', (e) => this.handleDragOver(e));
+            taskElement.addEventListener('dragenter', (e) => this.handleDragEnter(e));
+            taskElement.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+            taskElement.addEventListener('drop', (e) => this.handleDrop(e));
+            taskElement.addEventListener('dragend', (e) => this.handleDragEnd(e));
 
             tasksContainer.appendChild(taskElement);
         });
@@ -407,6 +427,107 @@ class SoloTask {
         } else {
             deleteBtn.style.display = 'none';
         }
+    }
+
+    // Drag and Drop Functions
+    handleDragStart(e) {
+        const taskId = e.target.getAttribute('data-task-id');
+        const taskIndex = parseInt(e.target.getAttribute('data-task-index'));
+        
+        this.draggedTask = {
+            id: taskId,
+            index: taskIndex,
+            element: e.target
+        };
+        
+        e.target.classList.add('task-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', e.target.outerHTML);
+    }
+
+    handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    handleDragEnter(e) {
+        e.preventDefault();
+        if (e.target.closest('[data-task-id]') && e.target.closest('[data-task-id]') !== this.draggedTask.element) {
+            e.target.closest('[data-task-id]').classList.add('task-drag-over');
+        }
+    }
+
+    handleDragLeave(e) {
+        if (e.target.closest('[data-task-id]') && e.target.closest('[data-task-id]') !== this.draggedTask.element) {
+            e.target.closest('[data-task-id]').classList.remove('task-drag-over');
+        }
+    }
+
+    handleDrop(e) {
+        e.preventDefault();
+        const dropTarget = e.target.closest('[data-task-id]');
+        
+        if (dropTarget && dropTarget !== this.draggedTask.element) {
+            const dropIndex = parseInt(dropTarget.getAttribute('data-task-index'));
+            this.reorderTask(this.draggedTask.index, dropIndex);
+        }
+        
+        // Clean up visual indicators
+        document.querySelectorAll('.task-drag-over').forEach(el => {
+            el.classList.remove('task-drag-over');
+        });
+    }
+
+    handleDragEnd(e) {
+        e.target.classList.remove('task-dragging');
+        document.querySelectorAll('.task-drag-over').forEach(el => {
+            el.classList.remove('task-drag-over');
+        });
+        this.draggedTask = null;
+    }
+
+    reorderTask(fromIndex, toIndex) {
+        const currentTasks = this.tasks[this.currentBoard] || [];
+        
+        // Get the sorted tasks (same sorting as renderTasks)
+        const sortedTasks = [...currentTasks].sort((a, b) => {
+            if (a.completed !== b.completed) {
+                return a.completed ? 1 : -1;
+            }
+            
+            if (a.order !== undefined && b.order !== undefined) {
+                return a.order - b.order;
+            }
+            
+            const priorityOrder = { high: 3, medium: 2, low: 1 };
+            if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                return priorityOrder[b.priority] - priorityOrder[a.priority];
+            }
+            
+            if (a.dueDate && b.dueDate) {
+                return new Date(a.dueDate) - new Date(b.dueDate);
+            }
+            
+            return new Date(a.createdAt) - new Date(b.createdAt);
+        });
+
+        // Move the task
+        const [movedTask] = sortedTasks.splice(fromIndex, 1);
+        sortedTasks.splice(toIndex, 0, movedTask);
+
+        // Update order property for all tasks
+        sortedTasks.forEach((task, index) => {
+            task.order = index;
+        });
+
+        // Update the tasks array
+        this.tasks[this.currentBoard] = currentTasks.map(task => {
+            const sortedTask = sortedTasks.find(st => st.id === task.id);
+            return sortedTask || task;
+        });
+
+        this.saveData();
+        this.renderTasks();
     }
 
     // Utility Functions
